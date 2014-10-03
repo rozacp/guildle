@@ -1,0 +1,14 @@
+/puphpet
+/vendor
+/.vagrant
+/.idea
+composer.phar
+composer.lock
+.env.*
+.DS_Store
+Thumbs.db
+.sass-cache
+*.css.map
+Vagrantfile
+guild.sublime-project
+guild.sublime-workspace

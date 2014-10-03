@@ -1,0 +1,45 @@
+
+.main {
+	width: 800px;
+	margin: 0 auto;
+	background: #f0f0f0;
+	padding: 20px;
+	border: 1px solid #aaa;
+}
+
+input, label, textarea {
+    display:block;
+    box-sizing: border-box;
+}
+
+label {
+	margin-bottom: 5px;
+}
+
+input, textarea {
+	width: 600px;
+	padding: 10px;
+}
+
+nav {
+	width: 800px;
+	margin: 0 auto;
+	background: #a0a0a0;
+	padding: 20px;
+	border: 1px solid #aaa;
+	overflow: auto;
+}
+
+nav li {
+	list-style: none;
+	float: left;
+	margin-right: 20px;
+	display: inline-block;
+	border-bottom: 5px solid #444;
+}
+
+a {
+	text-decoration: none;
+	text-transform: uppercase;
+	color: brown;
+}
