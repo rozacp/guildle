@@ -29,7 +29,19 @@ $router->post('userdata', array('as' => 'userdata', 'uses' => 'AuthController@sa
 $router->get('test', function(ChartoDb $character)
 {
 
-	dd(Guildle\Boss::all());
+
+	$chars = Guildle\User::find(1)->characters()->get();
+
+	$chars->each(function($char) {
+		var_dump($char->name);
+	});
+
+	// foreach ($chars as $char) {
+	// 	var_dump($char->name);
+	// }
+
+
+	// dd(Guildle\Faq::all()->toArray());
 	// return Auth::user();
 
 
