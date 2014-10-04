@@ -14,17 +14,21 @@ use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
 
 class ChartoDb
 {
-	public function __construct(SocialiteFactory $socialite)
+	private $user;
+	private $socialite;
+	private $harvester;
+
+	public function __construct(SocialiteFactory $socialite, Harvester $harvester)
 	{
 		$this->socialite = $socialite;
+		$this->harvester = $harvester;
+		$this->user = Auth::user();
 	}
 
-	public function postLogin()
+	public function saveNewCharacters()
 	{
-		// is called after auth, enters new characters
-
-		$user = Auth::user();
-		$user->characters()->delete();
+		// $this->user->characters()->delete();
+		dd($this->user);
 
 		$zones = ['eu', 'us', 'kr', 'tw'];
 
@@ -32,7 +36,7 @@ class ChartoDb
 
 		foreach ($zones as $zone)
 		{
-			$zonechars = $this->socialite->driver('battlenet')->getChars($zone, $user->access_token);
+			$zonechars = $this->socialite->driver('battlenet')->getChars($zone, $this->user->access_token);
 
 			foreach ($zonechars as $chars)
 			{
@@ -43,24 +47,31 @@ class ChartoDb
 
 		foreach($characters as $character)
 		{
-			if ($character['level'] > 0)
+			if ($character['level'] > 60)
 			{
 				$char = new Character;
 				$char = $char->fill($character);
-				$user->characters()->save($char);
+				$this->user->characters()->save($char);
 			}
 		}
 	}
 
-	public function postLogin($user_id)
+	public function updateNewCharacters()
 	{
+		$characters = $this->user->characters()->get();
 
-		$characters = User::find($user_id)->characters()->get();
+		$characters->each(function($char) {
+			var_dump($char->name);
+		});
 
 
-		{
-			$this->update($character->zone, $character->realm, $character->name, $user_id);
-		}
+
+		// $characters = User::find($user_id)->characters()->get();
+
+
+		// {
+		// 	$this->update($character->zone, $character->realm, $character->name, $user_id);
+		// }
 	}
 
 	public function periodic()
@@ -72,9 +83,9 @@ class ChartoDb
 
 	public function update($zone, $realm, $character, $user_id)
 	{
-		$characters = User::find($user_id)->characters()->get();
 
-		$harvester = new Harvester;
+
+		// $harvester = new Harvester;
 		$harvester->setParams($zone, $realm, $character);
 
 		foreach ($characters as $character)

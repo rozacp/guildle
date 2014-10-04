@@ -40,10 +40,10 @@ class AuthController extends Controller
 			$user = $user->fill($response);
 			$user->save();
 			Auth::login($user);
+			sleep(5);
+			$this->chartodb->saveNewCharacters();
 
-			$this->chartodb->postLogin();
-
-			return redirect(route('home'));
+			// return redirect(route('home'));
 		}
 	}
 
@@ -67,6 +67,8 @@ class AuthController extends Controller
 	public function saveUserData()
 	{
 		// save user form data into db, logs in user
+
+		$this->chartodb->saveNewCharacters();
 
 		return redirect(route('home'));
 	}

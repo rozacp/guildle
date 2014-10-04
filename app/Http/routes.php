@@ -30,7 +30,7 @@ $router->post('userdata', array('as' => 'userdata', 'uses' => 'AuthController@sa
 $router->get('test', function(ChartoDb $character)
 {
 
-	return $character->postAuth();
+	// return $character->postAuth();
 	// $chars = Guildle\User::find(1)->characters()->get();
 
 	// $chars->each(function($char) {
@@ -43,7 +43,11 @@ $router->get('test', function(ChartoDb $character)
 
 
 	// dd(Guildle\Faq::all()->toArray());
-	// dd(Auth::user()->access_token);
+	// $user = Auth::user();
+	// dd($user->characters()->get());
+
+	$character->updateNewCharacters();
+
 
 
 });
