@@ -25,15 +25,14 @@ class AuthController extends Controller
 		else
 		{
 			$response = $this->socialite->driver('battlenet')->getUser();
-			$battletag = $this->socialite->driver('battlenet')->getBattletag($response['access_token'])['battletag'];
-			$response['battletag'] = $battletag;
+			$response['battletag'] = $this->battletag($response['access_token']);
 
 			$user = User::where('accountId', '=', $response['accountId'])->first();
 
 			if (!$user)
 			{
 				$user = User::create($response);
-				Auth::login($user); // premakn po saveuserData()
+				Auth::login($user);
 
 				return redirect(route('userdata'));
 			}
@@ -42,44 +41,16 @@ class AuthController extends Controller
 			$user->save();
 			Auth::login($user);
 
-			// $zones = ['eu', 'us', 'kr', 'tw'];
-
-			// foreach ($zones as $zone)
-			// {
-			// 	$characters = $this->socialite->driver('battlenet')->getChars($zone, $response['access_token']);
-			// }
-
-			// $eu = $this->socialite->driver('battlenet')->getChars('eu', $response['access_token']);
-			// $us = $this->socialite->driver('battlenet')->getChars('us', $response['access_token']);
-			// $kr = $this->socialite->driver('battlenet')->getChars('kr', $response['access_token']);
-			// $tw = $this->socialite->driver('battlenet')->getChars('tw', $response['access_token']);
-
-			// dd([$eu, $us, $kr, $tw]);
-
-			// User::find(Auth::user()->id)->characters()->delete();
-			// $user->characters()->delete();
-
-			// foreach($eu as $character)
-			// {
-			// 	if ($character['level'] > 10)
-			// 	{
-			// 		$char = new Character;
-			// 		$char = $char->fill($character);
-			// 		$char->zone = 'eu';
-			// 		$user->characters()->save($char);
-			// 	}
-			// }
-
-			// $this->chartodb->postLogin(Auth::user()->id);
+			$this->chartodb->postLogin();
 
 			return redirect(route('home'));
 		}
 	}
 
-	public function validate()
+
+	private function battletag($access_token)
 	{
-		$battletag = $this->socialite->driver('battlenet')->getBattletag(Auth::user()->access_token)['battletag'];
-		return $battletag;
+		return $this->socialite->driver('battlenet')->getBattletag($access_token)['battletag'];
 	}
 
 	public function logout()
@@ -88,14 +59,16 @@ class AuthController extends Controller
 		return redirect(route('home'));
 	}
 
-	public function userData()
+	public function showUserData()
 	{
 		return View('userdata');
 	}
 
-	public function saveuserData()
+	public function saveUserData()
 	{
-		return 'save userdata';
+		// save user form data into db, logs in user
+
+		return redirect(route('home'));
 	}
 
 }

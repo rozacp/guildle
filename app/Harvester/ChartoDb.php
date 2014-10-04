@@ -1,6 +1,7 @@
 <?php namespace Guildle\Harvester;
 
 use Guildle\User;
+use Illuminate\Support\Facades\Auth;
 use Guildle\Character;
 use Guildle\Talent;
 use Guildle\Glyph;
@@ -8,21 +9,55 @@ use Guildle\Audit;
 use Guildle\Raid;
 use Guildle\Boss;
 use Guildle\Progression;
+use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
+
 
 class ChartoDb
 {
-	public function postAuth()
+	public function __construct(SocialiteFactory $socialite)
+	{
+		$this->socialite = $socialite;
+	}
+
+	public function postLogin()
 	{
 		// is called after auth, enters new characters
+
+		$user = Auth::user();
+		$user->characters()->delete();
+
+		$zones = ['eu', 'us', 'kr', 'tw'];
+
+		$characters = [];
+
+		foreach ($zones as $zone)
+		{
+			$zonechars = $this->socialite->driver('battlenet')->getChars($zone, $user->access_token);
+
+			foreach ($zonechars as $chars)
+			{
+				$chars['zone'] = $zone;
+				$characters[] = $chars;
+			}
+		}
+
+		foreach($characters as $character)
+		{
+			if ($character['level'] > 0)
+			{
+				$char = new Character;
+				$char = $char->fill($character);
+				$user->characters()->save($char);
+			}
+		}
 	}
 
 	public function postLogin($user_id)
 	{
-		// is called after login, updates characters
 
 		$characters = User::find($user_id)->characters()->get();
 
-		foreach ($characters as $character)
+
 		{
 			$this->update($character->zone, $character->realm, $character->name, $user_id);
 		}
@@ -37,9 +72,15 @@ class ChartoDb
 
 	public function update($zone, $realm, $character, $user_id)
 	{
+		$characters = User::find($user_id)->characters()->get();
+
 		$harvester = new Harvester;
 		$harvester->setParams($zone, $realm, $character);
 
+		foreach ($characters as $character)
+		{
+
+		}
 
 		// $character = Character::where('zone', '=', $character->zone)->where(-....-> first();
 		// if($character == null) {

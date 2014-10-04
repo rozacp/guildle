@@ -26,6 +26,6 @@ class PagesController extends Controller {
 
 	public function sendContact()
 	{
-		return 'probably mail the contact request';
+		return 'mail the contact request, probably ...';
 	}
 }

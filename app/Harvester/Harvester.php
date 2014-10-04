@@ -1,7 +1,6 @@
 <?php namespace Guildle\Harvester;
 
 use Cache;
-use Guildle\OAuth\CharacterNotFoundException;
 
 class Harvester
 {
