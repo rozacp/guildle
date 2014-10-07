@@ -149,7 +149,7 @@ class Character extends Model {
 
 	public function trinket2()
 	{
-		return $this->hasOne('Guildle\Trinket1');
+		return $this->hasOne('Guildle\Trinket2');
 	}
 
 	public function waist()
@@ -160,5 +160,15 @@ class Character extends Model {
 	public function wrist()
 	{
 		return $this->hasOne('Guildle\Wrist');
+	}
+
+	public function shirt()
+	{
+		return $this->hasOne('Guildle\Shirt');
+	}
+
+	public function tabard()
+	{
+		return $this->hasOne('Guildle\Tabard');
 	}
 }

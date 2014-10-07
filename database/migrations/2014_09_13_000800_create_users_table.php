@@ -29,7 +29,8 @@ class CreateUsersTable extends Migration {
 			$table->string('youtube', 60);
 			$table->string('twitch', 60);
 			$table->string('email');
-			$table->boolean('isadmin')->default(FALSE);
+			$table->boolean('premium')->default(FALSE);
+			$table->boolean('admin')->default(FALSE);
             $table->rememberToken();
 			$table->timestamps();
 		});

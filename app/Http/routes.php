@@ -27,31 +27,28 @@ $router->get('userdata', array('as' => 'userdata', 'uses' => 'AuthController@sho
 $router->post('userdata', array('as' => 'userdata', 'uses' => 'AuthController@saveUserData'));
 
 
-$router->get('test', function(ChartoDb $character)
+$router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
 
-	// return $character->postAuth();
-	// $chars = Guildle\User::find(1)->characters()->get();
+	$chartodb->updateNewCharacters(Auth::user());
 
-	// $chars->each(function($char) {
-	// 	var_dump($char->name);
+	// $harvester->setParams('eu', 'haomarush', 'weider');
+	// dd($harvester->gear());
+
+
+	// $characters = Guildle\User::find(1)->characters()->get();
+
+	// $characters->each(function($character) {
+
+	// 	$talents = $character->talents()->get();
+
+	// 	$talents->each(function($talent) {
+
+	// 		var_dump($talent->talent_name);
+
+	// 	});
 	// });
-
-	// foreach ($chars as $char) {
-	// 	var_dump($char->name);
-	// }
-
-
-	// dd(Guildle\Faq::all()->toArray());
-	// $user = Auth::user();
-	// dd($user->characters()->get());
-
-	$character->updateNewCharacters();
-
-
-
 });
-
 
 // /
 // /login

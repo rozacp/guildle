@@ -48,9 +48,4 @@ class User extends Model implements UserContract, RemindableContract {
 		return $this->hasMany('Guildle\Character');
 	}
 
-	public function checkAccessToken()
-	{
-		// implement
-	}
-
 }

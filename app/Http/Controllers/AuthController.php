@@ -1,12 +1,11 @@
 <?php namespace Guildle\Http\Controllers;
 
-use Guildle\Character;
-use Guildle\Harvester\ChartoDb;
 use Guildle\User;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
+use Guildle\Harvester\ChartoDb;
 
 class AuthController extends Controller
 {
@@ -27,23 +26,27 @@ class AuthController extends Controller
 			$response = $this->socialite->driver('battlenet')->getUser();
 			$response['battletag'] = $this->battletag($response['access_token']);
 
-			$user = User::where('accountId', '=', $response['accountId'])->first();
+			$user = User::where('accountId', $response['accountId'])->first();
 
 			if (!$user)
 			{
 				$user = User::create($response);
 				Auth::login($user);
 
-				return redirect(route('userdata'));
+				$this->chartodb->saveNewCharacters($user);
+				$this->chartodb->updateNewCharacters($user);
+
+				return $this->showUserData($user);
 			}
 
-			$user = $user->fill($response);
+			$user->fill($response);
 			$user->save();
 			Auth::login($user);
-			sleep(5);
-			$this->chartodb->saveNewCharacters();
 
-			// return redirect(route('home'));
+			$this->chartodb->saveNewCharacters($user);
+			$this->chartodb->updateNewCharacters($user);
+
+			return redirect(route('home'));
 		}
 	}
 
@@ -59,7 +62,7 @@ class AuthController extends Controller
 		return redirect(route('home'));
 	}
 
-	public function showUserData()
+	public function showUserData($user)
 	{
 		return View('userdata');
 	}
@@ -68,9 +71,6 @@ class AuthController extends Controller
 	{
 		// save user form data into db, logs in user
 
-		$this->chartodb->saveNewCharacters();
-
 		return redirect(route('home'));
 	}
-
 }
