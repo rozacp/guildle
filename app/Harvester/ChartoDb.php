@@ -61,101 +61,105 @@ class ChartoDb
 
 			if ($harvester->isValidCharacter())
 			{
-				// if ($character->lastmodified != $harvester->character()['lastmodified'])
-				// {
+				$chardata = $harvester->character();
 
-				// }
-
-				// character
-				$character->fill($harvester->character());
-				$character->save();
-
-				// audit
-				$audit = $harvester->audit();
-
-				Audit::updateOrCreate(
-					[
-						'character_id' => $character->id
-					],
-					$audit
-				);
-
-				// gear
-				$gear = $harvester->gear();
-
-				foreach ($gear as $slot => $stats)
+				if ($character->lastmodified == $chardata['lastmodified']) // CHANGE TO NOT EQUAL
 				{
-					$item = '\Guildle\\' . ucfirst($slot);
+					// character
+					$character->fill($chardata);
+					$character->save();
 
-					$item::updateOrCreate(
+					// audit
+					$audit = $harvester->audit();
+
+					Audit::updateOrCreate(
 						[
-							'character_id' => $character->id,
-							'item_id' => $stats['item_id']
+							'character_id' => $character->id
 						],
-						$stats
-					);
-				}
-
-				// talents
-				$talents = $harvester->talents();
-
-				foreach ($talents as $talent)
-				{
-					Talent::updateOrCreate(
-						[
-							'character_id' => $character->id,
-							'talent_id' => $talent['talent_id']
-						],
-						$talent
-					);
-				}
-
-				// glyphs
-				$glyphs = $harvester->glyphs();
-
-				foreach ($glyphs as $glyph)
-				{
-					Glyph::updateOrCreate(
-						[
-							'character_id' => $character->id,
-							'glyph_id' => $glyph['glyph_id']
-						],
-						$glyph
-					);
-				}
-
-				// progression
-				$progression = $harvester->progression();
-
-				foreach ($progression as $raid => $boss)
-				{
-					$raid = Raid::updateOrCreate(
-						[
-							'raid' => $raid
-						]
+						$audit
 					);
 
-					foreach ($boss as $boss)
+					// gear
+					$gear = $harvester->gear();
+
+					foreach ($gear as $slot => $stats)
 					{
-						$bossid = Boss::updateOrCreate(
-							[
-								'raids_id' => $raid->id,
-								'boss' => $boss['name']
-							]
-						);
+						$item = '\Guildle\\' . ucfirst($slot);
 
-						Progression::updateOrCreate(
+						$item::updateOrCreate(
 							[
 								'character_id' => $character->id,
-								'raids_id' => $raid->id,
-								'bosses_id' => $bossid->id
+								'item_id' => $stats['item_id']
 							],
+							$stats
+						);
+					}
+
+					// talents
+					$talents = $harvester->talents();
+
+					foreach ($talents as $talent)
+					{
+						Talent::updateOrCreate(
 							[
-								'lrf' => isset($boss['lfrKills']) ? $boss['lfrKills'] : 0,
-								'normal' => isset($boss['normalKills']) ? $boss['normalKills'] : 0,
-								'heroic' => isset($boss['heroicKills']) ? $boss['heroicKills'] : 0
+								'character_id' => $character->id,
+								'talent_id' => $talent['talent_id'],
+								'spec' => $talent['spec'],
+								'tier' => $talent['tier']
+							],
+							$talent
+						);
+					}
+
+					// glyphs
+					$glyphs = $harvester->glyphs();
+
+					foreach ($glyphs as $glyph)
+					{
+						Glyph::updateOrCreate(
+							[
+								'character_id' => $character->id,
+								'glyph_id' => $glyph['glyph_id'],
+								'spec' => $glyph['spec'],
+								'type' => $glyph['type']
+							],
+							$glyph
+						);
+					}
+
+					// progression
+					$progression = $harvester->progression();
+
+					foreach ($progression as $raid => $boss)
+					{
+						$raid = Raid::updateOrCreate(
+							[
+								'raid' => $raid
 							]
 						);
+
+						foreach ($boss as $boss)
+						{
+							$bossid = Boss::updateOrCreate(
+								[
+									'raids_id' => $raid->id,
+									'boss' => $boss['name']
+								]
+							);
+
+							Progression::updateOrCreate(
+								[
+									'character_id' => $character->id,
+									'raids_id' => $raid->id,
+									'bosses_id' => $bossid->id
+								],
+								[
+									'lrf' => isset($boss['lfrKills']) ? $boss['lfrKills'] : 0,
+									'normal' => isset($boss['normalKills']) ? $boss['normalKills'] : 0,
+									'heroic' => isset($boss['heroicKills']) ? $boss['heroicKills'] : 0
+								]
+							);
+						}
 					}
 				}
 			}
@@ -168,94 +172,12 @@ class ChartoDb
 
 	public function periodic()
 	{
-		// periodically updates characters
+		$characters = Character::where('updated_at', '<', Carbon::now()->subHours(2))->get();
 
-		$characters = Character::where('lastmodified', '>', '')->get();
 	}
 
-	public function update($zone, $realm, $character, $user_id)
+	public function update($user_id)
 	{
-		$harvester = new Harvester;
-		$harvester->setParams($zone, $realm, $character);
-
-		// $character = Character::where('zone', '=', $character->zone)->where(-....-> first();
-		// if($character == null) {
-		// }
-		// create new Character(
-		// else
-		// {
-		// 	updateCharacter;
-		// }
-		// $character = $character->fill($harvester->character());
-		// $character->user_id = 13;
-		// $character->save();
-
-		if ($harvester->isValidCharacter())
-		{
-			// character
-			$character_arr = $harvester->character();
-			$character_arr['user_id'] = $user_id;
-			$character = Character::updateOrCreate($character_arr);
-
-			// talents
-			$talents = $harvester->talents();
-
-			foreach ($talents as $talent)
-			{
-				$talent['character_id'] = $character->id;
-				Talent::updateOrCreate($talent);
-			}
-
-			// glyphs
-			$glyphs = $harvester->glyphs();
-
-			foreach ($glyphs as $glyph)
-			{
-				$glyph['character_id'] = $character->id;
-				Glyph::updateOrCreate($glyph);
-			}
-
-			// audit
-			$audit = $harvester->audit();
-			$audit['character_id'] = $character->id;
-			Audit::updateOrCreate($audit);
-
-			// gear
-			$gear = $harvester->gear();
-
-			foreach ($gear as $slot => $values)
-			{
-				$values['character_id'] = $character->id;
-				$item = 'Guildle\\' . ucfirst($slot);
-				$item::updateOrCreate($values);
-			}
-
-			// progression
-			$progression = $harvester->progression();
-
-			foreach ($progression as $raid => $boss)
-			{
-				$raid = Raid::updateOrCreate([
-					'raid' => $raid
-					]);
-
-				foreach ($boss as $boss)
-				{
-					$bossid = Boss::updateOrCreate([
-						'raids_id' => $raid->id,
-						'boss' => $boss['name']
-						]);
-
-					Progression::updateOrCreate([
-						'character_id' => $character->id,
-						'raids_id' => $raid->id,
-						'bosses_id' => $bossid->id,
-						'lrf' => isset($boss['lfrKills']) ? $boss['lfrKills'] : 0,
-						'normal' => isset($boss['normalKills']) ? $boss['normalKills'] : 0,
-						'heroic' => isset($boss['heroicKills']) ? $boss['heroicKills'] : 0
-						]);
-				}
-			}
-		}
+		//
 	}
 }

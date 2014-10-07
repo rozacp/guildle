@@ -1,5 +1,5 @@
 <?php
-
+use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,6 +10,8 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+
+// Route::when('*', 'csrf', array('post', 'put', 'delete'));
 
 use Guildle\Harvester\Harvester;
 use Guildle\Harvester\ChartoDb;
@@ -30,10 +32,18 @@ $router->post('userdata', array('as' => 'userdata', 'uses' => 'AuthController@sa
 $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
 
+
+
+
+	// echo $character->updated_at . '<br>';
+	// echo $character->updated_at->addHours(2);
+
+
+
 	$chartodb->updateNewCharacters(Auth::user());
 
 	// $harvester->setParams('eu', 'haomarush', 'weider');
-	// dd($harvester->gear());
+	// return $harvester->charData();
 
 
 	// $characters = Guildle\User::find(1)->characters()->get();
