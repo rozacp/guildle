@@ -33,14 +33,7 @@ $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
 
 
-
-
-	// echo $character->updated_at . '<br>';
-	// echo $character->updated_at->addHours(2);
-
-
-
-	$chartodb->updateNewCharacters(Auth::user());
+	$chartodb->updatePeriodicCharacters();
 
 	// $harvester->setParams('eu', 'haomarush', 'weider');
 	// return $harvester->charData();

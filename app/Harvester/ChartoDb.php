@@ -1,8 +1,5 @@
 <?php namespace Guildle\Harvester;
 
-// use Guildle\User;
-use Illuminate\Support\Facades\Auth;
-use Guildle\Harvester\Harvester;
 use Guildle\Character;
 use Guildle\Talent;
 use Guildle\Glyph;
@@ -11,66 +8,75 @@ use Guildle\Raid;
 use Guildle\Boss;
 use Guildle\Progression;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
-
+use Guildle\Harvester\Harvester as Harvester;
+use Carbon\Carbon;
 
 class ChartoDb
 {
-	public function __construct(SocialiteFactory $socialite)
+	public function __construct(SocialiteFactory $socialite, Harvester $harvester)
 	{
 		$this->socialite = $socialite;
+		$this->harvester = $harvester;
 	}
 
-	public function saveNewCharacters($user)
+	public function saveCharacters($user)
 	{
-		$user->characters()->delete();
-
 		$zones = ['eu', 'us', 'kr', 'tw'];
-
-		$characters = [];
 
 		foreach ($zones as $zone)
 		{
-			$zonechars = $this->socialite->driver('battlenet')->getChars($zone, $user->access_token);
+			$characters = $this->socialite->driver('battlenet')->getChars($zone, $user->access_token);
 
-			foreach ($zonechars as $chars)
+			foreach ($characters as $character)
 			{
-				$chars['zone'] = $zone;
-				$characters[] = $chars;
-			}
-		}
+				$character['zone'] = $zone;
 
-		foreach($characters as $character)
-		{
-			if ($character['level'] > 10)
-			{
-				$char = new Character;
-				$char = $char->fill($character);
-				$user->characters()->save($char);
+				if ($character['level'] > 10)
+				{
+					$char = Character::where('zone', $zone)
+						->where('realm', $character['realm'])
+						->where('name', $character['name'])
+						->first() ?: new Character;
+
+					$char = $char->fill($character);
+					$user->characters()->save($char);
+				}
 			}
 		}
 	}
 
-	public function updateNewCharacters($user)
+	public function updateCharacters($user)
 	{
 		$characters = $user->characters()->get();
 
+		return $this->writeCharacters($characters);
+	}
+
+	public function periodicallyUpdateCharacters()
+	{
+		$characters = Character::where('updated_at', '<', Carbon::now()->subHours(2))->get();
+
+		return $this->writeCharacters($characters);
+	}
+
+	private function writeCharacters($characters)
+	{
 		$characters->each(function($character) {
 
-			$harvester = new Harvester;
-			$harvester->setParams($character->zone, $character->realm, $character->name);
+			$this->harvester->setParams($character->zone, $character->realm, $character->name);
 
-			if ($harvester->isValidCharacter())
+			if ($this->harvester->isValidCharacter())
 			{
-				$chardata = $harvester->character();
+				$chardata = $this->harvester->character();
 
-				if ($character->lastmodified == $chardata['lastmodified']) // CHANGE TO NOT EQUAL
+				if ($character->lastmodified != $chardata['lastmodified'])
 				{
 					// character
 					$character->fill($chardata);
 					$character->save();
 
 					// audit
-					$audit = $harvester->audit();
+					$audit = $this->harvester->audit();
 
 					Audit::updateOrCreate(
 						[
@@ -80,7 +86,7 @@ class ChartoDb
 					);
 
 					// gear
-					$gear = $harvester->gear();
+					$gear = $this->harvester->gear();
 
 					foreach ($gear as $slot => $stats)
 					{
@@ -96,7 +102,7 @@ class ChartoDb
 					}
 
 					// talents
-					$talents = $harvester->talents();
+					$talents = $this->harvester->talents();
 
 					foreach ($talents as $talent)
 					{
@@ -112,7 +118,7 @@ class ChartoDb
 					}
 
 					// glyphs
-					$glyphs = $harvester->glyphs();
+					$glyphs = $this->harvester->glyphs();
 
 					foreach ($glyphs as $glyph)
 					{
@@ -128,7 +134,7 @@ class ChartoDb
 					}
 
 					// progression
-					$progression = $harvester->progression();
+					$progression = $this->harvester->progression();
 
 					foreach ($progression as $raid => $boss)
 					{
@@ -168,16 +174,5 @@ class ChartoDb
 				$character->delete();
 			}
 		});
-	}
-
-	public function periodic()
-	{
-		$characters = Character::where('updated_at', '<', Carbon::now()->subHours(2))->get();
-
-	}
-
-	public function update($user_id)
-	{
-		//
 	}
 }

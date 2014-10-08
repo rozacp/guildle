@@ -5,7 +5,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
-use Guildle\Harvester\ChartoDb;
+use Guildle\Harvester\ChartoDb as ChartoDb;
 
 class AuthController extends Controller
 {
@@ -33,8 +33,8 @@ class AuthController extends Controller
 				$user = User::create($response);
 				Auth::login($user);
 
-				$this->chartodb->saveNewCharacters($user);
-				$this->chartodb->updateNewCharacters($user);
+				$this->chartodb->saveCharacters($user);
+				$this->chartodb->updateCharacters($user);
 
 				return $this->showUserData($user);
 			}
@@ -43,13 +43,12 @@ class AuthController extends Controller
 			$user->save();
 			Auth::login($user);
 
-			$this->chartodb->saveNewCharacters($user);
-			$this->chartodb->updateNewCharacters($user);
+			$this->chartodb->saveCharacters($user);
+			$this->chartodb->updateCharacters($user);
 
 			return redirect(route('home'));
 		}
 	}
-
 
 	private function battletag($access_token)
 	{
