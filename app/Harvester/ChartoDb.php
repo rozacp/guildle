@@ -69,8 +69,8 @@ class ChartoDb
 			{
 				$chardata = $this->harvester->character();
 
-				if ($character->lastmodified != $chardata['lastmodified'])
-				{
+				// if ($character->lastmodified != $chardata['lastmodified'])
+				// {
 					// character
 					$character->fill($chardata);
 					$character->save();
@@ -167,7 +167,7 @@ class ChartoDb
 							);
 						}
 					}
-				}
+				// }
 			}
 			else
 			{

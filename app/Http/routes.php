@@ -33,10 +33,9 @@ $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
 
 
-	$chartodb->updatePeriodicCharacters();
 
-	// $harvester->setParams('eu', 'haomarush', 'weider');
-	// return $harvester->charData();
+	$harvester->setParams('eu', 'Frostwhisper', 'Vesy');
+	return $harvester->charData();
 
 
 	// $characters = Guildle\User::find(1)->characters()->get();

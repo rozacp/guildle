@@ -136,10 +136,19 @@ class Harvester
 
 	private function specActive()
 	{
-		return isset($this->chardata['talents'][0]['selected']) ? $this->chardata['talents'][0]['spec']['name'] : $this->chardata['talents'][1]['spec']['name'];
+		if (isset($this->chardata['talents'][0]['selected']))
+		{
+			return $this->chardata['talents'][0]['spec']['name'];
+		}
+		else if (isset($this->chardata['talents'][1]['selected']))
+		{
+			return $this->chardata['talents'][1]['spec']['name'];
+		}
+		else
+		{
+			return NULL;
+		}
 	}
-
-
 
 	/** RETREIVABLE CHAR DATA **/
 
@@ -155,13 +164,13 @@ class Harvester
 			'faction' => $this->charRace()['1'],
 			'char_race' => $this->charRace()['0'],
 			'char_class' => $this->charClass(),
-			'specfirst' => $this->chardata['talents'][0]['spec']['name'],
-			'specsecond' => $this->chardata['talents'][1]['spec']['name'],
+			'specfirst' => isset($this->chardata['talents'][0]['spec']['name']) ? $this->chardata['talents'][0]['spec']['name'] : NULL,
+			'specsecond' => isset($this->chardata['talents'][1]['spec']['name']) ? $this->chardata['talents'][1]['spec']['name'] : NULL,
 			'specactive' => $this->specActive(),
-			'profnamefirst' => $this->chardata['professions']['primary'][1]['name'],
-			'profrankfirst' => $this->chardata['professions']['primary'][1]['rank'],
-			'profnamesecond' => $this->chardata['professions']['primary'][0]['name'],
-			'profranksecond' => $this->chardata['professions']['primary'][0]['rank'],
+			'profnamefirst' => isset($this->chardata['professions']['primary'][1]['name']) ? $this->chardata['professions']['primary'][1]['name'] : NULL,
+			'profrankfirst' => isset($this->chardata['professions']['primary'][1]['rank']) ? $this->chardata['professions']['primary'][1]['rank'] : NULL,
+			'profnamesecond' => isset($this->chardata['professions']['primary'][0]['name']) ? $this->chardata['professions']['primary'][0]['name'] : NULL,
+			'profranksecond' => isset($this->chardata['professions']['primary'][0]['rank']) ? $this->chardata['professions']['primary'][0]['rank'] : NULL,
 			'ilevel' => $this->chardata['items']['averageItemLevelEquipped'],
 			'health' => $this->chardata['stats']['health'],
 			'str' => $this->chardata['stats']['str'],
