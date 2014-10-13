@@ -33,7 +33,7 @@ class Harvester
 		return $apiResult ?: FALSE;
 	}
 
-	private function charData()
+	public function charData()
 	{
 		$url = $this->baseurl . 'character/' . $this->realm . '/' . $this->charname . '?fields=talents,items,progression,professions,audit,stats&apikey=' . $this->client_id;
 		$key = $this->charname . $this->realm . $this->zone;
@@ -134,15 +134,25 @@ class Harvester
 		return 'http://' . $this->zone . '.battle.net/wow/en/character/' . $this->realm . '/' . $this->charname . '/advanced';
 	}
 
+	private function specFirst()
+	{
+		return isset($this->chardata['talents'][0]['spec']['name']) ? $this->chardata['talents'][0]['spec']['name'] : NULL;
+	}
+
+	private function specSecond()
+	{
+		return isset($this->chardata['talents'][1]['spec']['name']) ? $this->chardata['talents'][1]['spec']['name'] : NULL;
+	}
+
 	private function specActive()
 	{
 		if (isset($this->chardata['talents'][0]['selected']))
 		{
-			return $this->chardata['talents'][0]['spec']['name'];
+			return $this->specFirst();
 		}
 		else if (isset($this->chardata['talents'][1]['selected']))
 		{
-			return $this->chardata['talents'][1]['spec']['name'];
+			return $this->specSecond();
 		}
 		else
 		{
@@ -164,8 +174,8 @@ class Harvester
 			'faction' => $this->charRace()['1'],
 			'char_race' => $this->charRace()['0'],
 			'char_class' => $this->charClass(),
-			'specfirst' => isset($this->chardata['talents'][0]['spec']['name']) ? $this->chardata['talents'][0]['spec']['name'] : NULL,
-			'specsecond' => isset($this->chardata['talents'][1]['spec']['name']) ? $this->chardata['talents'][1]['spec']['name'] : NULL,
+			'specfirst' => $this->specFirst(),
+			'specsecond' => $this->specSecond(),
 			'specactive' => $this->specActive(),
 			'profnamefirst' => isset($this->chardata['professions']['primary'][1]['name']) ? $this->chardata['professions']['primary'][1]['name'] : NULL,
 			'profrankfirst' => isset($this->chardata['professions']['primary'][1]['rank']) ? $this->chardata['professions']['primary'][1]['rank'] : NULL,

@@ -31,22 +31,25 @@ class AuthController extends Controller
 			if (!$user)
 			{
 				$user = User::create($response);
+
 				Auth::login($user);
 
 				$this->chartodb->saveCharacters($user);
-				$this->chartodb->updateCharacters($user);
 
 				return $this->showUserData($user);
 			}
+			else
+			{
+				$user->fill($response);
 
-			$user->fill($response);
-			$user->save();
-			Auth::login($user);
+				$user->save();
 
-			$this->chartodb->saveCharacters($user);
-			$this->chartodb->updateCharacters($user);
+				Auth::login($user);
 
-			return redirect(route('home'));
+				$this->chartodb->saveCharacters($user);
+
+				return redirect(route('home'));
+			}
 		}
 	}
 

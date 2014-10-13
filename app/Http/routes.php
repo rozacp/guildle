@@ -31,25 +31,14 @@ $router->post('userdata', array('as' => 'userdata', 'uses' => 'AuthController@sa
 
 $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
+	// $chartodb->updateCharacters(Guildle\User::find(1));
 
+	$harvester->setParams('eu', 'haomarush', 'Bixy');
+	return $harvester->talents();
 
+	// $char = Guildle\Character::where('zone', 'eu')->where('realm', 'haomarush')->where('name', 'Weidah')->first();
+	// $chartodb->writeCharacter($char);
 
-	$harvester->setParams('eu', 'Frostwhisper', 'Vesy');
-	return $harvester->charData();
-
-
-	// $characters = Guildle\User::find(1)->characters()->get();
-
-	// $characters->each(function($character) {
-
-	// 	$talents = $character->talents()->get();
-
-	// 	$talents->each(function($talent) {
-
-	// 		var_dump($talent->talent_name);
-
-	// 	});
-	// });
 });
 
 // /
