@@ -33,7 +33,7 @@ $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 {
 	// $chartodb->updateCharacters(Guildle\User::find(1));
 
-	$harvester->setParams('eu', 'haomarush', 'poyo');
+	$harvester->setParams('eu', 'haomarush', 'veider');
 	return $harvester->charData();
 
 	// $char = Guildle\Character::where('zone', 'eu')->where('realm', 'haomarush')->where('name', 'Weidah')->first();
