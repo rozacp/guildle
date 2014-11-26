@@ -24,6 +24,7 @@ class CreateProgressionsTable extends Migration {
 			$table->integer('lrf');
 			$table->integer('normal');
 			$table->integer('heroic');
+			$table->integer('mythic');
 			$table->timestamps();
 		});
 	}

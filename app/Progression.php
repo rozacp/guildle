@@ -11,7 +11,8 @@ class Progression extends Model {
 		'bosses_id',
 		'lrf',
 		'normal',
-		'heroic'
+		'heroic',
+		'mythic'
 	];
 
 	protected $table = 'progressions';

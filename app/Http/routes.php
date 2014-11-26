@@ -34,6 +34,9 @@ $router->get('test', function(ChartoDb $chartodb, Harvester $harvester)
 	// $chartodb->updateCharacters(Guildle\User::find(1));
 
 	$harvester->setParams('eu', 'haomarush', 'veider');
+	// $harvester->setParams('eu', 'Ravenholdt', 'huntard');
+	// $harvester->setParams('eu', 'Kazzak', 'dex');
+	// $harvester->setParams('eu', 'Kazzak', 'poyo');
 	return $harvester->charData();
 
 	// $char = Guildle\Character::where('zone', 'eu')->where('realm', 'haomarush')->where('name', 'Weidah')->first();

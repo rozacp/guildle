@@ -176,7 +176,8 @@ class ChartoDb
 							[
 								'lrf' => isset($boss['lfrKills']) ? $boss['lfrKills'] : 0,
 								'normal' => isset($boss['normalKills']) ? $boss['normalKills'] : 0,
-								'heroic' => isset($boss['heroicKills']) ? $boss['heroicKills'] : 0
+								'heroic' => isset($boss['heroicKills']) ? $boss['heroicKills'] : 0,
+								'mythic' => isset($boss['mythicKills']) ? $boss['mythicKills'] : 0
 							]
 						);
 					}
