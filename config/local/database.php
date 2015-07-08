@@ -23,7 +23,7 @@ return [
 		'mysql' => [
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'guild',
+			'database'  => 'guildle',
 			'username'  => 'root',
 			'password'  => 'root',
 			'charset'   => 'utf8',

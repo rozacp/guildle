@@ -31,7 +31,7 @@ return [
 	'battlenet' => [
 		'client_id' => $_ENV['CLIENT_ID'],
 		'client_secret' => $_ENV['CLIENT_SECRET'],
-		'redirect' => 'https://guild.dev/login'
+		'redirect' => 'https://guildle.dev/login'
 	]
 
 ];
