@@ -24,7 +24,12 @@ class AuthController extends Controller
 		else
 		{
 			$response = $this->socialite->driver('battlenet')->getUser();
-			$response['battletag'] = $this->battletag($response['access_token']);
+
+			// after i get da tokn
+			$battletagAndUserId = $this->battletagAndUserId($response['access_token']);
+
+			$response['battletag'] = $battletagAndUserId['battletag'];
+			$response['accountId'] = $battletagAndUserId['id'];
 
 			$user = User::where('accountId', $response['accountId'])->first();
 
@@ -34,7 +39,7 @@ class AuthController extends Controller
 
 				Auth::login($user);
 
-				$this->chartodb->saveCharacters($user);
+				// $this->chartodb->saveCharacters($user);
 
 				return $this->showUserData($user);
 			}
@@ -53,10 +58,11 @@ class AuthController extends Controller
 		}
 	}
 
-	private function battletag($access_token)
+	private function battletagAndUserId($access_token)
 	{
-		return $this->socialite->driver('battlenet')->getBattletag($access_token)['battletag'];
+		return $this->socialite->driver('battlenet')->getBattletagAndUserId($access_token);
 	}
+
 
 	public function logout()
 	{

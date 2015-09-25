@@ -46,9 +46,9 @@ class BattlenetProvider extends AbstractProvider implements ProviderInterface {
 		return json_decode($response->getBody(), TRUE);
 	}
 
-	public function getBattletag($token)
+	public function getBattletagAndUserId($token)
 	{
-		$response = $this->getHttpClient()->get('https://eu.api.battle.net/account/user/battletag?access_token=' . $token,
+		$response = $this->getHttpClient()->get('https://eu.api.battle.net/account/user?access_token=' . $token,
 			[
 				'headers' => ['Accept' => 'application/json']
 			]);
