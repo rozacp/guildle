@@ -164,7 +164,7 @@ class Harvester
 
 	public function isValidCharacter()
 	{
-		return $this->chardata ? TRUE : FALSE;
+		return $this->chardata ?: FALSE;
 	}
 
 	public function character()
@@ -308,7 +308,7 @@ class Harvester
 
 	public function gear()
 	{
-		foreach ($this->chardata['items'] as $key => $value)
+		foreach ($this->chardata['items'] as $key => $value) // dej to raje array_keys()
 		{
 			$gear_slots[] = $key;
 		}

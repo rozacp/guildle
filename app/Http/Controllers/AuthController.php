@@ -35,13 +35,13 @@ class AuthController extends Controller
 
 			if (!$user)
 			{
-				$user = User::create($response);
+				$user = User::create($response);  // sam en updateOrcreate ?
 
 				Auth::login($user);
 
 				// $this->chartodb->saveCharacters($user);
 
-				return $this->showUserData($user);
+				return $this->showUserData($user); // spuci une funkcije spodaj in sam returni view
 			}
 			else
 			{

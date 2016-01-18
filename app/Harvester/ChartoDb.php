@@ -37,7 +37,7 @@ class ChartoDb
 
 					if ($char)
 					{
-						$char = $char->fill($character);
+						$char = $char->fill($character); // uporab en sam updateOrCreate() z belongsTo()
 
 						$this->writeCharacter($char);
 					}
