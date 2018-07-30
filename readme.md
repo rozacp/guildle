@@ -1,3 +1,7 @@
+## World of warcraft Laravel application using battle.net OAuth
+
+Connecting players and guilds. Battle.net character snapshots, guild creations.
+
 ## Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
